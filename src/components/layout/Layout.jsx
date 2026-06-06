@@ -1,20 +1,18 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Box from "@mui/material/Box";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
+const SIDEBAR_WIDTH = 220;
+
 export default function Layout({ lang, mode, onToggleMode, onLangChange }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
-    const handleMenuClick = () => {
-        setSidebarOpen((prev) => !prev);
-    };
-
-    const handleSidebarClose = () => {
-        setSidebarOpen(false);
-    };
 
     return (
         <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
@@ -23,14 +21,14 @@ export default function Layout({ lang, mode, onToggleMode, onLangChange }) {
                 mode={mode}
                 onToggleMode={onToggleMode}
                 onLangChange={onLangChange}
-                onMenuClick={handleMenuClick}
+                onMenuClick={() => setSidebarOpen((p) => !p)}
             />
 
             <Box sx={{ display: "flex" }}>
                 <Sidebar
                     lang={lang}
                     open={sidebarOpen}
-                    onClose={handleSidebarClose}
+                    onClose={() => setSidebarOpen(false)}
                 />
 
                 <Box
@@ -39,6 +37,8 @@ export default function Layout({ lang, mode, onToggleMode, onLangChange }) {
                         flex: 1,
                         py: 3,
                         px: { xs: 2, sm: 3 },
+                        minWidth: 0,
+                        width: isMobile ? "100%" : `calc(100% - ${SIDEBAR_WIDTH}px)`,
                         minHeight: "calc(100vh - 64px)",
                     }}
                 >
